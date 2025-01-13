@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Advanced Calculator</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        background-color: #181818;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+      }
+
+      #calculator {
+        background-color: #282828;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      #display {
+        background-color: #383838;
+        color: #fff;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        text-align: right;
+        font-size: 2rem;
+        overflow-x: auto;
+      }
+
+      button {
+        width: 60px;
+        height: 60px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1.2rem;
+        background-color: #484848;
+        color: #fff;
+        transition: background-color 0.2s ease;
+      }
+
+      button:hover {
+        background-color: #585858;
+      }
+
+      .operator {
+        background-color: #f06449;
+      }
+
+      .operator:hover {
+        background-color: #f37a69;
+      }
+
+      .clear {
+        background-color: #999;
+      }
+
+      .clear:hover {
+        background-color: #aaa;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="calculator">
+      <div id="display">0</div>
+      <div>
+        <button class="clear">C</button>
+        <button class="clear">AC</button>
+        <button class="operator">/</button>
+      </div>
+      <div>
+        <button>7</button>
+        <button>8</button>
+        <button>9</button>
+        <button class="operator">*</button>
+      </div>
+      <div>
+        <button>4</button>
+        <button>5</button>
+        <button>6</button>
+        <button class="operator">-</button>
+      </div>
+      <div>
+        <button>1</button>
+        <button>2</button>
+        <button>3</button>
+        <button class="operator">+</button>
+      </div>
+      <div>
+        <button>0</button>
+        <button>.</button>
+        <button class="operator">=</button>
+      </div>
+    </div>
+
+    <script>
+      const display = document.getElementById("display");
+      let currentInput = "0";
+      let lastCharIsOperator = false;
+
+      function updateDisplay() {
+        display.textContent = currentInput;
+      }
+
+      function addToInput(value) {
+        const isOperator = ["+", "-", "*", "/", "%"].includes(value);
+
+        if (isOperator && lastCharIsOperator) {
+          return; // Prevent multiple consecutive operators
+        }
+
+        if (currentInput === "0" && value !== ".") {
+          currentInput = value;
+        } else {
+          currentInput += value;
+        }
+
+        lastCharIsOperator = isOperator;
+        updateDisplay();
+      }
+
+      function clearLast() {
+        currentInput = currentInput.slice(0, -1);
+        if (currentInput === "") {
+          currentInput = "0";
+        }
+        lastCharIsOperator = false; // Reset operator flag
+        updateDisplay();
+      }
+
+      function clearAll() {
+        currentInput = "0";
+        lastCharIsOperator = false;
+        updateDisplay();
+      }
+
+      // Shunting-yard algorithm for operator precedence
+      function shuntingYard(infix) {
+        const outputQueue = [];
+        const operatorStack = [];
+        const precedence = {
+          "+": 1,
+          "-": 1,
+          "*": 2,
+          "/": 2,
+          "%": 2,
+        };
+
+        const tokens = infix.split("");
+
+        for (const token of tokens) {
+          if (!isNaN(token) || token === ".") {
+            outputQueue.push(token);
+          } else if (token === "(") {
+            operatorStack.push(token);
+          } else if (token === ")") {
+            while (operatorStack[operatorStack.length - 1] !== "(") {
+              if (operatorStack.length === 0) {
+                throw new Error("Mismatched parentheses");
+              }
+              outputQueue.push(operatorStack.pop());
+            }
+            operatorStack.pop(); // Remove the '('
+          } else {
+            // Operator
+            while (
+              operatorStack.length > 0 &&
+              operatorStack[operatorStack.length - 1] !== "(" &&
+              precedence[token] <=
+                precedence[operatorStack[operatorStack.length - 1]]
+            ) {
+              outputQueue.push(operatorStack.pop());
+            }
+            operatorStack.push(token);
+          }
+        }
+
+        while (operatorStack.length > 0) {
+          outputQueue.push(operatorStack.pop());
+        }
+
+        return outputQueue;
+      }
+
+      function evaluateRPN(rpn) {
+        const stack = [];
+        for (const token of rpn) {
+          if (!isNaN(token)) {
+            stack.push(parseFloat(token));
+          } else {
+            const operand2 = stack.pop();
+            const operand1 = stack.pop();
+            switch (token) {
+              case "+":
+                stack.push(operand1 + operand2);
+                break;
+              case "-":
+                stack.push(operand1 - operand2);
+                break;
+              case "*":
+                stack.push(operand1 * operand2);
+                break;
+              case "/":
+                if (operand2 === 0) {
+                  throw new Error("Division by zero");
+                }
+                stack.push(operand1 / operand2);
+                break;
+              case "%":
+                if (operand2 === 0) {
+                  throw new Error("Modulo by zero");
+                }
+                stack.push(operand1 % operand2);
+                break;
+              default:
+                throw new Error("Invalid operator");
+            }
+          }
+        }
+        return stack.pop();
+      }
+
+      function calculate() {
+        try {
+          if (
+            currentInput === "" ||
+            currentInput === "0" ||
+            lastCharIsOperator
+          ) {
+            return; // Do nothing if input is empty, '0', or ends with an operator
+          }
+
+          const rpn = shuntingYard(currentInput);
+          const result = evaluateRPN(rpn);
+          currentInput = result.toString();
+          lastCharIsOperator = false; // Reset after calculation
+        } catch (error) {
+          currentInput = error.message;
+        }
+        updateDisplay();
+      }
+      // Attach event listeners to buttons
+      const buttons = document.querySelectorAll("button");
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const value = button.textContent;
+          if (!isNaN(value) || value === ".") {
+            addToInput(value);
+          } else if (value === "=") {
+            calculate();
+          } else if (value === "C") {
+            clearLast();
+          } else if (value === "AC") {
+            clearAll();
+          } else {
+            addToInput(value); // For operators
+          }
+        });
+      });
+
+      // Keyboard support
+      document.addEventListener("keydown", (event) => {
+        const key = event.key;
+        if (
+          !isNaN(key) ||
+          key === "." ||
+          key === "+" ||
+          key === "-" ||
+          key === "*" ||
+          key === "/" ||
+          key === "Enter"
+        ) {
+          if (key === "Enter") {
+            calculate();
+          } else {
+            addToInput(key);
+          }
+        } else if (key === "Backspace") {
+          clearLast();
+        } else if (key === "Escape") {
+          clearAll();
+        }
+      });
+
+      updateDisplay();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      let coin = Math.random();
+      let guess = "heads";
+      let result = "";
+      console.log(coin);
+
+      if (coin <= 0.5) {
+        result = "heads";
+      } else {
+        result = "tails";
+      }
+
+      console.log(result);
+
+      if (guess === result) {
+        console.log("You win");
+      } else {
+        console.log("You Lose");
+      }
+
+      let coin2 = Math.random();
+      let result2 = " ";
+      console.log(coin2);
+
+      coin2 <= 0.5 ? (result2 = "heads") : (result2 = "tails");
+      console.log(result2);
+
+      guess === result2 ? console.log("You win") : console.log("You lose");
+    </script>
+  </body>
+</html>
