@@ -9,12 +9,19 @@
     <h1>JavaScript Functions</h1>
     <p>Open the console to see the function in action.</p>
     <script>
-      function function1() {
-        console.log("Hello Universe");
-        console.log(2 + 2);
+      // function function1() {
+      //   console.log("Hello Universe");
+      //   console.log(2 + 2);
+      // }
+
+      // function1();
+
+      function calculateTax(cost, taxPercent = 0.2) {
+        console.log(cost * taxPercent);
       }
 
-      function1();
+      calculateTax(100, 0.1);
+      calculateTax(100);
     </script>
   </body>
 </html>
