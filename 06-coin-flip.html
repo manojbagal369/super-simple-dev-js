@@ -1,39 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
+<html>
+  <head></head>
   <body>
+    <button
+      onclick="
+      playGame('heads');
+    "
+    >
+      heads
+    </button>
+
+    <button
+      onclick="
+      playGame('tails');
+    "
+    >
+      tails
+    </button>
+
     <script>
-      let coin = Math.random();
-      let guess = "heads";
-      let result = "";
-      console.log(coin);
+      // We can use const here since score is a reference
+      // so we can modify it even if it uses const.
+      const score = JSON.parse(localStorage.getItem("score")) || {
+        wins: 0,
+        losses: 0,
+      };
 
-      if (coin <= 0.5) {
-        result = "heads";
-      } else {
-        result = "tails";
+      function playGame(guess) {
+        const randomNumber = Math.random();
+        const result = randomNumber < 0.5 ? "heads" : "tails";
+
+        console.log(guess === result ? "You win!" : "You lose!");
+
+        if (guess === result) {
+          score.wins++;
+        } else {
+          score.losses++;
+        }
+        console.log(score);
+
+        localStorage.setItem("score", JSON.stringify(score));
       }
-
-      console.log(result);
-
-      if (guess === result) {
-        console.log("You win");
-      } else {
-        console.log("You Lose");
-      }
-
-      let coin2 = Math.random();
-      let result2 = " ";
-      console.log(coin2);
-
-      coin2 <= 0.5 ? (result2 = "heads") : (result2 = "tails");
-      console.log(result2);
-
-      guess === result2 ? console.log("You win") : console.log("You lose");
     </script>
   </body>
 </html>
