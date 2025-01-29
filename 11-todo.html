@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo List</title>
+  </head>
+  <body>
+    <p>Todo List Practice 1</p>
+    <input placeholder="Enter the task" class="todo-input" />
+
+    <button class="button1" onclick="addToArray()">Add</button>
+
+    <p class="todo-output"></p>
+    <script>
+      let arrayValues = [];
+
+      function addToArray() {
+        let todoInput = document.querySelector(".todo-input");
+        let inputValue = todoInput.value;
+
+        if (inputValue) {
+          arrayValues.push([inputValue]);
+          document.querySelector(".todo-output").innerHTML = arrayValues;
+
+          todoInput.value = "";
+        }
+      }
+    </script>
+  </body>
+</html>

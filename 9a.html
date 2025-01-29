@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- Exercise 9a -->
+    <button>9a</button>
+
+    <!-- Exercise 9b -->
+    <button class="button-2">9b</button>
+
+    <br />
+    <br />
+
+    <!-- Exercise 9c -->
+    <button
+      onclick="document.querySelector('.js-choice').innerHTML = 'You choose: Heads'"
+    >
+      heads
+    </button>
+
+    <button
+      onclick="document.querySelector('.js-choice').innerHTML = 'You choose: Tails'"
+    >
+      tails
+    </button>
+
+    <p class="js-choice"></p>
+
+    <!-- Exercise 9d -->
+    <input
+      placeholder="Enter your name"
+      class="text-entered"
+      onkeydown="eventKeyEnter(event)"
+    />
+
+    <button onclick="nameFun()">Submit</button>
+
+    <p class="js-name"></p>
+
+    <!-- Exercise 9h -->
+    <input
+      class="js-input"
+      onkeyup="const inputElement = document.querySelector('.js-input');
+      document.querySelector('.js-message').innerHTML=inputElement.value"
+    />
+
+    <p class="js-message"></p>
+
+    <script>
+      // Exercise 9a
+      console.log(document.querySelector("button"));
+
+      // Exercise 9b
+      document.querySelector(".button-2").innerHTML = "9b done!";
+
+      // Exercise 9d
+      function eventKeyEnter(event) {
+        if (event.key === "Enter") {
+          nameFun();
+        }
+      }
+
+      function nameFun() {
+        let nameEntered = document.querySelector(".text-entered");
+
+        document.querySelector(
+          ".js-name"
+        ).innerHTML = `Your name is: ${nameEntered.value}`;
+      }
+    </script>
+  </body>
+</html>
